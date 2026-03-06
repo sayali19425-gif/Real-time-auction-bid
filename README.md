@@ -71,8 +71,16 @@ Tools
 - Git
 - GitHub
 
+1. Clone the repository
+git clone  https://github.com/sayali19425-gif/Real-time-auction-bid
+cd auction-bid
+2. Install dependencies
+npm install
+3. Start the development server
+npm run dev
 
-4. Project Structure
+
+5. Project Structure
 
 auction-dapp
 │
