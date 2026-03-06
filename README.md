@@ -74,13 +74,13 @@ Tools
 1. Clone the repository
 git clone  https://github.com/sayali19425-gif/Real-time-auction-bid
 cd auction-bid
-2. Install dependencies
+2. Install dependencies:
 npm install
-3. Start the development server
+4. Start the development server:
 npm run dev
 
 
-5. Project Structure
+6. Project Structure
 
 auction-dapp
 │
