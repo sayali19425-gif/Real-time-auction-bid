@@ -130,7 +130,7 @@ auction-dapp
 7. Project Live Link
    http://localhost:5173/
 
-8. live demo of project :
+8. Demo of project video link :
 https://drive.google.com/file/d/1hJ3acMp2tpHzfvMNa1bsOy3nR1pjNUvq/view?usp=sharing
   
 9. Example Bid Flow
