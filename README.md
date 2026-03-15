@@ -1,182 +1,171 @@
-1. Real-Time Auction Bid dApp
+# 🔨 Real-Time Auction Bid dApp
 
-A simple decentralized auction interface built with React (Vite) and a Rust smart contract (Soroban).
-This project simulates a real-time auction where users can connect their Stellar wallet, place bids, and see the highest bid update dynamically.
+> A decentralized auction interface built with **React (Vite)** + **Rust/Soroban** smart contract on the Stellar blockchain.
 
-The goal of this project is to demonstrate how a frontend interface can interact with blockchain-style logic while providing a clean and responsive user experience.
+## 📌 Overview
 
+This project simulates a **real-time decentralized auction** where users can connect their Stellar wallet, place competing bids, and watch the highest bid update live. It demonstrates how a modern React frontend can interact with blockchain-style smart contract logic.
 
-2. Project Overview
+**Key highlights:**
+- 🔐 Stellar wallet connection via public key
+- ⏱️ Live countdown timer with a custom React hook
+- ⚔️ Dual bidder panels with real-time bid comparison
+- 📜 Full bid history tracking
+- 📱 Responsive layout using CSS Grid
 
-This application allows users to participate in a digital auction for an NFT-like asset.
+---
 
-The application includes:
-    - Wallet connection screen
-    - Live auction display
-    - Countdown timer
-    - Two bid entry panels
-    - Bid comparison logic
-    - Bid history tracking
+## 🚀 Live Demo
 
-The system simulates a real-time bidding environment where the highest bid is updated and displayed immediately.
+🎬 **[Watch Demo Video](https://drive.google.com/file/d/1hJ3acMp2tpHzfvMNa1bsOy3nR1pjNUvq/view?usp=sharing)**
 
+---
 
-3. Features
-Wallet Connection
-   - Users enter their Stellar public key to simulate connecting a wallet.
+## 🖼️ Screenshots
 
-Live Auction Data
+### Wallet Connection
+<img width="1893" height="843" alt="wallet-connected" src="https://github.com/user-attachments/assets/f74a0725-be5d-4ec3-953f-33f80c2417a5" />
 
-The interface displays:
-    - Auction item
-    - Current highest bid
-    - Highest bidder
-    - Countdown timer
+### Auction Page
+<img width="1888" height="865" alt="auction-page" src="https://github.com/user-attachments/assets/8731db28-469b-43ce-9eae-200a36de9972" />
 
-Real-Time Countdown
-    -The countdown timer updates every second using a custom React hook.
+### Bid History
+<img width="1879" height="803" alt="bid-history" src="https://github.com/user-attachments/assets/6eaf4a05-bc48-4bd7-ba19-9f5bb72eae27" />
 
-Dual Bid System
-    - Two bidders can place bids simultaneously and the system compares them.
+---
 
-Bid Validation
-Bids must:
-    - Be higher than the current bid
-    - Contain a valid wallet address
-    - Contain a numeric XLM value
+## 🛠️ Tech Stack
 
-Bid Comparison
-- If two bids are entered, the interface displays which bid is higher.
+| Layer | Technology |
+|---|---|
+| Frontend | React, Vite, JavaScript, CSS |
+| Smart Contract | Rust, Soroban (Stellar) |
+| Dev Tools | VS Code, Git, GitHub |
 
-Bid History
-- All successful bids are stored and displayed in the history page.
+---
 
-Responsive UI
-- The layout adapts to different screen sizes using CSS grid and responsive styles.
+## ✨ Features
 
-Tech Stack:
+| Feature | Description |
+|---|---|
+| 🔑 Wallet Connection | Enter a Stellar public key to simulate wallet auth |
+| 📊 Live Auction Data | Displays item, current highest bid, and top bidder |
+| ⏳ Countdown Timer | Updates every second via a custom React hook |
+| ⚔️ Dual Bid System | Two bidders can compete simultaneously |
+| ✅ Bid Validation | Enforces bid amount > current bid, valid wallet address, and numeric XLM value |
+| 🏆 Bid Comparison | Instantly shows which of two submitted bids is higher |
+| 📜 Bid History | All successful bids are logged and displayed on a history page |
+| 📱 Responsive UI | Adapts gracefully across screen sizes using CSS Grid |
 
-Frontend
-- React
-- Vite
-- JavaScript
-- CSS
+---
 
-Blockchain Layer
-- Rust
-- Soroban Smart Contract
+## ⚙️ Getting Started
 
-Tools
-- VS Code
-- Git
-- GitHub
+### Prerequisites
+- Node.js ≥ 18
+- npm
 
-1. Clone the repository
-git clone  https://github.com/sayali19425-gif/Real-time-auction-bid
-cd auction-bid
-2. Install dependencies:
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/sayali19425-gif/Real-time-auction-bid.git
+cd Real-time-auction-bid
+
+# 2. Navigate to the frontend
+cd frontend
+
+# 3. Install dependencies
 npm install
-4. Start the development server:
+
+# 4. Start the development server
 npm run dev
+```
 
+The app will be available at `http://localhost:5173/`
 
-6. Project Structure
+---
 
-auction-dapp
+## 📁 Project Structure
+
+```
+auction-dapp/
 │
-├── contract
-│   ├── src
+├── contract/                  # Soroban smart contract (Rust)
+│   ├── src/
 │   │   └── lib.rs
 │   ├── Cargo.toml
 │   └── Cargo.lock
 │
-├── frontend
-│   ├── public
-│   ├── src
+├── frontend/                  # React frontend (Vite)
+│   ├── public/
+│   ├── src/
 │   │   ├── App.jsx
 │   │   ├── App.css
 │   │   └── main.jsx
-│   │
 │   ├── index.html
 │   ├── package.json
-│   ├── package-lock.json
 │   ├── vite.config.js
 │   └── eslint.config.js
 │
 ├── .gitignore
 └── README.md
+```
 
+---
 
-5. How the Application Works
+## 🔄 How It Works
 
-    (1) The user opens the application.
-    (2) The wallet connection page appears.
-    (3) The user enters a Stellar public key.
-    (4) After validation, the auction interface loads.
-    (5) The auction item and current highest bid are displayed.
-    (6) Users can enter bids in the two bidding panels.
-    (7) When a bid is submitted:
-        - The system validates the bid.
-        - The highest bid is updated.
-        - The bid is saved in history.
-    (8) The countdown timer continues until the auction ends.
+```
+User opens app
+      ↓
+Wallet connection screen appears
+      ↓
+User enters Stellar public key → Validated
+      ↓
+Auction interface loads (item + current highest bid)
+      ↓
+User submits a bid
+      ↓
+Bid validated (amount, address, XLM format)
+      ↓
+Highest bid updates in real-time
+      ↓
+Bid saved to history
+      ↓
+Countdown timer continues until auction ends
+```
 
+---
 
-6. Screenshots: 
-### Wallet Connected
-![Wallet Connected](screenshots/wallet-connected.png)
-<img width="1893" height="843" alt="wallet-connected png" src="https://github.com/user-attachments/assets/f74a0725-be5d-4ec3-953f-33f80c2417a5" />
+## 💡 Key Concepts Demonstrated
 
-### Auction Page
-![Auction Page](screenshots/auction-page.png)
-<img width="1888" height="865" alt="auction-page png" src="https://github.com/user-attachments/assets/8731db28-469b-43ce-9eae-200a36de9972" />
-
-### Bid History
-![Bid History](screenshots/bid-history.png)
-<img width="1879" height="803" alt="bid-hidtory png" src="https://github.com/user-attachments/assets/6eaf4a05-bc48-4bd7-ba19-9f5bb72eae27" />
-
-7. Project Live Link
-   http://localhost:5173/
-
-8. Demo of project video link :
-https://drive.google.com/file/d/1hJ3acMp2tpHzfvMNa1bsOy3nR1pjNUvq/view?usp=sharing
-  
-9. Example Bid Flow
-User connects wallet
-        ↓
-Auction page loads
-        ↓
-User enters bid
-        ↓
-Bid validation occurs
-        ↓
-Highest bid updates
-        ↓
-Bid stored in history
-
-
-10. Key Concepts Demonstrated
-
-This project demonstrates:
 - React state management
-- Custom hooks
+- Custom React hooks (countdown timer)
 - Form validation
 - Conditional rendering
 - Real-time UI updates
-- Basic blockchain integration structure
+- Blockchain integration structure (Soroban/Stellar)
 
+---
 
-11. Future Improvements
-- Connecting the UI to a real Stellar smart contract
-- Integrating Freighter wallet directly
-- Adding live blockchain event streaming
-- Implementing real token transfers
-- Adding user authentication
-- Deploying the app on Vercel or Netlify
+## 🔮 Future Improvements
 
+- [ ] Connect UI to a deployed Stellar smart contract
+- [ ] Integrate Freighter wallet directly
+- [ ] Add live blockchain event streaming
+- [ ] Implement real XLM token transfers
+- [ ] Add user authentication
+- [ ] Deploy on Vercel or Netlify
 
-12. Author
-- Project developed as a learning project for building decentralized applications.
+---
 
-13. License
-- This project is open-source and available for educational purposes.
+## 👩‍💻 Author
+
+Built as a learning project to explore decentralized application development using React and the Stellar blockchain.
+
+---
+
+## 📄 License
+
+This project is open-source and available for educational purposes.
