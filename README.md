@@ -15,7 +15,13 @@ This project simulates a **real-time decentralized auction** where users can con
 
 ---
 
-## 🚀 Live Demo
+## 🚀 Live Demo link
+
+https://real-time-auction-bid.vercel.app/
+
+---
+
+## 🚀 Demo Video link
 
 🎬 **[Watch Demo Video](https://drive.google.com/file/d/1hJ3acMp2tpHzfvMNa1bsOy3nR1pjNUvq/view?usp=sharing)**
 
