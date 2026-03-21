@@ -43,10 +43,11 @@ https://real-time-auction-bid.vercel.app/
 ## 🚀 Smart Contract Deployment
 
 - **Network:** Stellar Testnet  
-- **Contract ID:** CALDYQAYNTBRT4ZW4EVECRW7OYWYCCES64L7TZGAPONXGYVC7MYBXHEV  
+- - **Contract ID:** CA72GKIPJOLFOBLQW7VBHMHCIBNVHF5GEH3CATAH5OCPSK2W3HI7ZMJ4
 
 ### 🔗 View on Explorer  
-[Open Contract on Stellar Explorer](https://stellar.expert/explorer/testnet/contract/CALDYQAYNTBRT4ZW4EVECRW7OYWYCCES64L7TZGAPONXGYVC7MYBXHEV)
+[Open Contract on Stellar Explorer]
+(https://stellar.expert/explorer/testnet/contract/CA72GKIPJOLFOBLQW7VBHMHCIBNVHF5GEH3CATAH5OCPSK2W3HI7ZMJ4)
 
 ### 📸 Deployment Proof:
 ![Contract Deployment]<img width="1919" height="875" alt="contract-deployment png" src="https://github.com/user-attachments/assets/a0d11fad-6851-4d92-b206-b2c4e9b59585" />
@@ -57,12 +58,13 @@ https://real-time-auction-bid.vercel.app/
 
 ## 🔗 Smart Contract Integration
 
-- Smart contract successfully deployed on Stellar Testnet
-- Contract ID integrated into the frontend application
-- Freighter wallet is used for secure wallet connection
-- The application structure is prepared for smart contract interaction
-- Currently, bidding logic is simulated at the frontend level
-
+## 🔗 Smart Contract Integration
+- Smart contract deployed on Stellar Testnet ✅
+- Frontend reads live auction state from contract every 5 seconds ✅
+- `contractService.js` — handles all contract reads and bid transactions ✅
+- `walletService.js` — connects Freighter wallet (v5+ API) ✅
+- Bids submitted as real Stellar transactions signed by Freighter ✅
+- Highest bid and top bidder updated on-chain after each successful bid ✅
 ---
 
 ## 🛠️ Tech Stack
@@ -133,6 +135,8 @@ auction-dapp/
 │   ├── src/
 │   │   ├── App.jsx
 │   │   ├── App.css
+│   │   ├── contractService.js  
+│   │   ├── walletService.js    
 │   │   └── main.jsx
 │   ├── index.html
 │   ├── package.json
@@ -182,10 +186,11 @@ Countdown timer continues until auction ends
 
 ## 🔮 Future Improvements
 
-- [ ] Implement full on-chain bidding using `place_bid`
-- [ ] Fetch real-time contract state from blockchain
-- [ ] Add live transaction tracking
-- [ ] Improve wallet integration with auto-connect
+## 🔮 Future Improvements
+- [x] Implement full on-chain bidding using `place_bid` ✅
+- [x] Fetch real-time contract state from blockchain ✅
+- [x] Improve wallet integration with Freighter auto-connect ✅
+- [ ] Add live transaction tracking via Stellar Explorer
 - [ ] Support multiple auctions
 
 ---
