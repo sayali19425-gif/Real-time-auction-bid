@@ -30,13 +30,13 @@ https://real-time-auction-bid.vercel.app/
 ## 🖼️ Screenshots
 
 ### Wallet Connection
-<img width="1893" height="843" alt="wallet-connected" src="https://github.com/user-attachments/assets/f74a0725-be5d-4ec3-953f-33f80c2417a5" />
+<img width="1893" height="843" alt="wallet-connected png" src="https://github.com/user-attachments/assets/bac74e94-a7d1-4f3b-9bb6-7960b916b82a" />
 
 ### Auction Page
-<img width="1888" height="865" alt="auction-page" src="https://github.com/user-attachments/assets/8731db28-469b-43ce-9eae-200a36de9972" />
+<img width="1880" height="856" alt="Screenshot 2026-03-21 105233" src="https://github.com/user-attachments/assets/5e3462b5-e242-4ae5-8796-e9f8dd5f54a8" />
 
 ### Bid History
-<img width="1879" height="803" alt="bid-history" src="https://github.com/user-attachments/assets/6eaf4a05-bc48-4bd7-ba19-9f5bb72eae27" />
+<img width="1908" height="860" alt="Screenshot 2026-03-21 105246" src="https://github.com/user-attachments/assets/8bdbaf79-2d58-444b-a45b-5c981f439faa" />
 
 ---
 
