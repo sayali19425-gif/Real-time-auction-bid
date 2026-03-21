@@ -1,17 +1,7 @@
-// useAuction.js
-// Custom React hook that polls the smart contract every 5 seconds
-// and keeps your UI in sync with the blockchain state.
-// Place this file in: frontend/src/hooks/useAuction.js
 
 import { useState, useEffect, useCallback } from "react";
 import { getAuctionState, placeBid } from "../contractService";
 
-/**
- * useAuction — polls the Soroban contract and exposes bid state + actions.
- *
- * Usage in any component:
- *   const { auctionData, loading, error, submitBid, bidding } = useAuction();
- */
 export function useAuction() {
   const [auctionData, setAuctionData] = useState({
     highestBid: 0,

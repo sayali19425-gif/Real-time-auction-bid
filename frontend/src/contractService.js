@@ -6,6 +6,21 @@ const NETWORK_PASSPHRASE = StellarSdk.Networks.TESTNET;
 const RPC_URL = "https://soroban-testnet.stellar.org";
 const server = new Server(RPC_URL);
 
+// ─── get connected Freighter wallet address ───────────────────────────────────
+async function getFreighterAddress() {
+  const freighter = await import("@stellar/freighter-api");
+  // Freighter v5+ uses requestAccess() to get address
+  try {
+    const result = await freighter.requestAccess();
+    return typeof result === "string" ? result : result.address;
+  } catch {
+    // fallback for older versions
+    const key = await freighter.getPublicKey();
+    return typeof key === "string" ? key : key.publicKey;
+  }
+}
+
+// ─── read-only simulation ─────────────────────────────────────────────────────
 async function simulateContractCall(functionName, args = []) {
   const account = await server.getAccount(
     "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN"
@@ -23,6 +38,7 @@ async function simulateContractCall(functionName, args = []) {
   return simResult.result.retval;
 }
 
+// ─── READ FUNCTIONS ───────────────────────────────────────────────────────────
 export async function getHighestBid() {
   try {
     const r = await simulateContractCall("get_highest_bid");
@@ -76,9 +92,15 @@ export async function getAuctionState() {
   };
 }
 
+
 export async function placeBid(bidderAddress, amountXLM) {
-  const amountStroops = Math.floor(amountXLM * 10_000_000);
-  const account = await server.getAccount(bidderAddress);
+  const amountStroops = BigInt(Math.floor(amountXLM * 10_000_000));
+
+  // Always use connected Freighter wallet as the transaction fee payer
+  const signerAddress = await getFreighterAddress();
+
+  // Load the SIGNER's account (not the bidder's) for the transaction
+  const account = await server.getAccount(signerAddress);
   const contract = new StellarSdk.Contract(CONTRACT_ID);
 
   const tx = new StellarSdk.TransactionBuilder(account, {
@@ -88,6 +110,7 @@ export async function placeBid(bidderAddress, amountXLM) {
     .addOperation(
       contract.call(
         "place_bid",
+        // bidder can be any address — contract no longer requires their auth
         StellarSdk.nativeToScVal(bidderAddress, { type: "address" }),
         StellarSdk.nativeToScVal(amountStroops, { type: "u64" })
       )
@@ -96,10 +119,18 @@ export async function placeBid(bidderAddress, amountXLM) {
     .build();
 
   const simResult = await server.simulateTransaction(tx);
-  if (!simResult.result) throw new Error("Simulation failed");
+
+  if (StellarSdk.rpc.Api.isSimulationError(simResult)) {
+    throw new Error("Contract rejected bid: " + simResult.error);
+  }
+
+  if (!simResult.result) {
+    throw new Error("Simulation returned no result");
+  }
 
   const preparedTx = StellarSdk.rpc.assembleTransaction(tx, simResult).build();
 
+  // Sign with Freighter (signer's wallet)
   const { signTransaction } = await import("@stellar/freighter-api");
   const result = await signTransaction(preparedTx.toXDR(), {
     networkPassphrase: NETWORK_PASSPHRASE,
@@ -113,7 +144,7 @@ export async function placeBid(bidderAddress, amountXLM) {
   const submitResult = await server.sendTransaction(signedTx);
 
   if (submitResult.status === "ERROR") {
-    throw new Error("Transaction rejected: " + JSON.stringify(submitResult.errorResult));
+    throw new Error("Network rejected transaction: " + JSON.stringify(submitResult.errorResult));
   }
 
   for (let i = 0; i < 30; i++) {

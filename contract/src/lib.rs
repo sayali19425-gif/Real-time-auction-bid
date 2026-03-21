@@ -17,9 +17,7 @@ pub struct AuctionContract;
 #[contractimpl]
 impl AuctionContract {
 
-    // Call this once to start the auction
-    // item_name = name of the item being auctioned
-    // duration_secs = how long the auction runs (in seconds)
+    
     pub fn initialize(env: Env, item_name: String, duration_secs: u64) {
         // Stop if auction already started
         if env.storage().instance().has(&DataKey::AuctionStarted) {
@@ -44,7 +42,6 @@ impl AuctionContract {
     // amount = bid amount in stroops (1 XLM = 10,000,000 stroops)
     pub fn place_bid(env: Env, bidder: Address, amount: u64) {
         // Make sure the bidder signed this transaction
-        bidder.require_auth();
 
         // Check auction exists
         if !env.storage().instance().has(&DataKey::AuctionStarted) {

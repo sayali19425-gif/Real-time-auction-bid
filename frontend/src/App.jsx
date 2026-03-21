@@ -1,17 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
-
-// ── NEW: import the integration files you added ──────────────────────────────
 import { getAuctionState, placeBid as contractPlaceBid } from "./contractService";
 import { connectWallet, getConnectedWallet } from "./walletService";
 
-// UNCHANGED: short helper
 const short = (addr) => (!addr || addr.length < 10) ? addr : addr.slice(0, 6) + "..." + addr.slice(-4);
-
-// UNCHANGED: history array at module level (exactly as your original)
 const history = [];
 
-// UNCHANGED: countdown hook
 function useCountdown(endTime) {
   const calc = () => {
     const ms = endTime - Date.now();
@@ -27,30 +21,22 @@ function useCountdown(endTime) {
   return t;
 }
 
-// ── Page 1: wallet connection ─────────────────────────────────────────────────
-// UI: 100% unchanged — same inputs, same labels, same layout
-// Logic change: handleConnect now also tries Freighter if no address typed
 function Page1({ onConnected }) {
   const [address, setAddress] = useState("");
   const [status, setStatus] = useState(null);
 
-  // NEW: auto-reconnect if Freighter was already approved in a previous session
   useEffect(() => {
     getConnectedWallet().then((key) => { if (key) onConnected(key); });
   }, []);
 
   async function handleConnect() {
     const key = address.trim();
-
-    // Original path: user typed an address manually — keep exact same validation
     if (key) {
       if (!key.startsWith("G") || key.length < 56)
         return setStatus({ ok: false, msg: "Invalid Address. Must start with G and be 56 characters." });
       setStatus({ ok: true, msg: "✅ Wallet connected successfully!" });
       return setTimeout(() => onConnected(key), 1200);
     }
-
-    // NEW path: nothing typed → try Freighter extension
     try {
       const walletKey = await connectWallet();
       setStatus({ ok: true, msg: "✅ Wallet connected successfully!" });
@@ -65,14 +51,12 @@ function Page1({ onConnected }) {
     }
   }
 
-  // UNCHANGED: exact same JSX as your original
   return (
     <div className="p1">
       <div className="p1-box">
         <div className="p1-logo"></div>
         <h1 className="p1-title">Real Time Auction Bid</h1>
         <p className="p1-sub">Bid on exclusive digital assets on the Stellar blockchain. Transparent, instant, and secure.</p>
-
         <div className="p1-form">
           <label className="lbl">your stellar wallet address</label>
           <input className="inp" type="text" placeholder="G... your public key (56 characters)"
@@ -82,7 +66,6 @@ function Page1({ onConnected }) {
           {status && <p className={status.ok ? "ok" : "err"}>{status.msg}</p>}
           <p className="hint">Open Freighter extension → copy your G... address → paste above</p>
         </div>
-
         <div className="p1-pills">
           <span className="pill">24h Auction</span>
           <span className="pill">XLM Currency</span>
@@ -93,72 +76,60 @@ function Page1({ onConnected }) {
   );
 }
 
-// ── Page 2: auction ───────────────────────────────────────────────────────────
-// UI: 100% unchanged — same layout, same class names, same elements
-// Logic changes:
-//   1. auction state comes from contract (polled every 5s) instead of hardcoded object
-//   2. placeBid submits a real Soroban transaction instead of a fake setTimeout
 function Page2({ wallet, onGoHistory }) {
-  // CHANGED: initial state mirrors the old auction object shape but starts empty
   const [data, setData] = useState({
-    item:       "Loading...",
+    item: "Loading...",
     currentBid: 0,
-    topBidder:  "no bid yet",
-    endTime:    Date.now() + 24 * 60 * 60 * 1000,
+    topBidder: "no bid yet",
+    endTime: Date.now() + 24 * 60 * 60 * 1000,
   });
-
   const [addr1, setAddr1] = useState(wallet || "");
   const [addr2, setAddr2] = useState("");
   const [bid1, setBid1] = useState("");
   const [bid2, setBid2] = useState("");
   const [status, setStatus] = useState(null);
   const [busy, setBusy] = useState(false);
-
-  // UNCHANGED: countdown still works exactly the same — just fed real endTime now
   const time = useCountdown(data.endTime);
-
-  // NEW: fetch real state from contract
   const refresh = useCallback(async () => {
-    try {
-      const s = await getAuctionState();
+  try {
+    const s = await getAuctionState();
+    console.log("Auction state:", s); // debug
+    if (s.itemName) {
       setData({
-        item:       s.itemName,
+        item: s.itemName,
         currentBid: s.highestBidXLM,
-        topBidder:  s.highestBidder ?? "no bid yet",
-        endTime:    s.endTime * 1000,   // contract returns seconds, Date needs ms
+        topBidder: s.highestBidder ?? "no bid yet",
+        endTime: s.endTime * 1000,
       });
-    } catch {
-      // silently keep last known state on network error
     }
-  }, []);
+  } catch (err) {
+    console.error("Refresh error:", err);
+  }
+}, []);
 
-  // CHANGED: replaced setInterval({ ...auction }) with real contract polling
   useEffect(() => {
     refresh();
     const id = setInterval(refresh, 5000);
     return () => clearInterval(id);
   }, [refresh]);
 
-  // CHANGED: replaced fake setTimeout with real Soroban transaction
-  // Same function signature and same status message format as your original
   async function placeBid(address, amount, label) {
     const val = parseFloat(amount);
-    if (!address || address.trim().length < 10) return setStatus({ ok: false, msg: `${label}: enter a valid wallet address.` });
-    if (!val || isNaN(val)) return setStatus({ ok: false, msg: `${label}: enter a valid XLM amount.` });
-    if (val <= data.currentBid) return setStatus({ ok: false, msg: `❌ ${label} failed - ${val} XLM is less than the current bid of ${data.currentBid} XLM.` });
+    if (!address || address.trim().length < 10)
+      return setStatus({ ok: false, msg: `${label}: enter a valid wallet address.` });
+    if (!val || isNaN(val))
+      return setStatus({ ok: false, msg: `${label}: enter a valid XLM amount.` });
+    if (val <= data.currentBid)
+      return setStatus({ ok: false, msg: `❌ ${label} failed - ${val} XLM is less than the current bid of ${data.currentBid} XLM.` });
 
-    setBusy(true); setStatus(null);
+    setBusy(true);
+    setStatus(null);
 
     try {
-      // NEW: real contract call — Freighter signs, testnet receives
+      // Use the address from the input field directly
       await contractPlaceBid(address, val);
-
-      // NEW: immediately reflect new state from chain
       await refresh();
-
-      // UNCHANGED: history.unshift format identical to your original
       history.unshift({ id: Date.now(), address, amount: val, label, time: new Date().toLocaleTimeString() });
-
       setStatus({ ok: true, msg: `🎉 ${label} — Bid of ${val} XLM placed successfully!` });
     } catch (err) {
       setStatus({ ok: false, msg: `❌ ${label} failed - ${err.message}` });
@@ -170,10 +141,11 @@ function Page2({ wallet, onGoHistory }) {
   const v1 = parseFloat(bid1) || 0;
   const v2 = parseFloat(bid2) || 0;
   const compareMsg = v1 > 0 && v2 > 0
-    ? v1 > v2 ? `🏆 Bid 1 is higher — ${v1} XLM` : v2 > v1 ? `🏆 Bid 2 is higher — ${v2} XLM` : `🤝 Both bids are equal — ${v1} XLM`
+    ? v1 > v2 ? `🏆 Bid 1 is higher — ${v1} XLM`
+    : v2 > v1 ? `🏆 Bid 2 is higher — ${v2} XLM`
+    : `🤝 Both bids are equal — ${v1} XLM`
     : null;
 
-  // UNCHANGED: exact same JSX as your original
   return (
     <div className="p2">
       <div className="topbar">
@@ -184,7 +156,6 @@ function Page2({ wallet, onGoHistory }) {
           <button className="btn-outline sm" onClick={onGoHistory}>History →</button>
         </div>
       </div>
-
       <div className="p2-body">
         <div className="info-card">
           <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800" alt="Diamond Jewelry" className="info-img" />
@@ -215,9 +186,7 @@ function Page2({ wallet, onGoHistory }) {
 
         <div className="bids-row">
           <div className="bid-box bid-box-blue">
-            <div className="bid-box-head">
-              <span className="bid-box-label">BID 1</span>
-            </div>
+            <div className="bid-box-head"><span className="bid-box-label">BID 1</span></div>
             <div className="bid-box-body">
               <label className="lbl">Wallet Address</label>
               <input className="inp" type="text" placeholder="G... public key" value={addr1} onChange={(e) => setAddr1(e.target.value)} />
@@ -235,9 +204,7 @@ function Page2({ wallet, onGoHistory }) {
           <div className="vs-badge">VS</div>
 
           <div className="bid-box bid-box-coral">
-            <div className="bid-box-head">
-              <span className="bid-box-label">BID 2</span>
-            </div>
+            <div className="bid-box-head"><span className="bid-box-label">BID 2</span></div>
             <div className="bid-box-body">
               <label className="lbl">Wallet Address</label>
               <input className="inp" type="text" placeholder="G... public key" value={addr2} onChange={(e) => setAddr2(e.target.value)} />
@@ -260,8 +227,6 @@ function Page2({ wallet, onGoHistory }) {
   );
 }
 
-// ── Page 3: bid history ───────────────────────────────────────────────────────
-// UNCHANGED: 100% identical to your original
 function Page3({ onBack }) {
   return (
     <div className="p2">
@@ -271,10 +236,8 @@ function Page3({ onBack }) {
           <button className="btn-outline sm" onClick={onBack}>← Back</button>
         </div>
       </div>
-
       <div className="p2-body">
         <h2 style={{ fontWeight: 800, fontSize: "1.2rem" }}>Bid History</h2>
-
         {history.length === 0 ? (
           <p className="hint" style={{ marginTop: "2rem" }}>No bids placed yet.</p>
         ) : (
@@ -295,12 +258,9 @@ function Page3({ onBack }) {
   );
 }
 
-// ── Root App ──────────────────────────────────────────────────────────────────
-// UNCHANGED: identical to your original
 export default function App() {
   const [page, setPage] = useState(1);
   const [wallet, setWallet] = useState(null);
-
   return (
     <>
       {page === 1 && <Page1 onConnected={(key) => { setWallet(key); setPage(2); }} />}
